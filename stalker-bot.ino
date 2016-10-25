@@ -12,13 +12,11 @@ byte YellowLed = 10;
 byte GreenLed = 9;
 
 int motorSpeed = 0;
-int lastMotorSpeed;
+int lastMotorSpeed = 0;
+int step = 5;
 
 byte DistanceSensorInput = 1;
 int DistanceSensorValue;
-byte LastSpeed = 0;
-//byte DistSpeed = DistanceSensorValue*-1+170;
-int MotorSpeedFrwd = map(DistanceSensorValue, 0, 170, 100, 0);
 
 byte Pwm_b = 3;
 byte Dir_b1 = 1;
@@ -36,17 +34,15 @@ void setup() {
   pinMode(Dir_b1, OUTPUT);
   pinMode(Dir_b2, OUTPUT);
 
-  analogWrite(Pwm_b, 0); //Problem with |?
+  analogWrite(Pwm_b, 0);
 
   Serial.begin(9600);
 }
 
 void loop() {
   DistanceSensorValue = analogRead(DistanceSensorInput);
-  DistanceSensorValue = analogRead(0);
-  //Serial.println(DState);
-  //Serial.println(DistanceSensorValue);
-  Serial.print("motorSpeed:");
+  DistanceSensorValue = analogRead(5);
+
   Serial.println(motorSpeed);
 
   switch (DState) {
@@ -54,7 +50,7 @@ void loop() {
       digitalWrite(YellowLed, LOW);
       digitalWrite(GreenLed, LOW);
       digitalWrite(RedLed, HIGH);
-      delay(5000);
+      delay(1000);
       Serial.println("starting");
       DState = Stop;
     break;
@@ -63,11 +59,7 @@ void loop() {
       digitalWrite(YellowLed, HIGH);
       digitalWrite(GreenLed, LOW);
       digitalWrite(RedLed, LOW);
-
-      motorSpeed = 0;
-      lastMotorSpeed = 0;
-      //Motor_1(0,10); // Not defined?
-      //delay(100);
+      motorRun(0);
       if (DistanceSensorValue < 170) {
         DState = Frwd;
       } else if (DistanceSensorValue > 230) {
@@ -79,11 +71,7 @@ void loop() {
       digitalWrite(YellowLed, LOW);
       digitalWrite(GreenLed, HIGH);
       digitalWrite(RedLed, LOW);
-
       motorRun(1);
-
-      //Motor_1(100,10);
-      //delay(50);
       if (DistanceSensorValue > 170) {
         DState = Stop;
       }
@@ -93,11 +81,7 @@ void loop() {
       digitalWrite(YellowLed, LOW);
       digitalWrite(GreenLed, LOW);
       digitalWrite(RedLed, HIGH);
-
-      motorRun(0);
-
-      //Motor_1(100,10);
-      //delay(50);
+      motorRun(2);
       if (DistanceSensorValue < 230) {
         DState = Stop;
       }
